@@ -11,7 +11,7 @@ class OfficerLogin extends StatefulWidget {
 
 class _OfficerLoginState extends State<OfficerLogin> {
   final _officerIdController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
+  final _passwordController = TextEditingController();
   String errorMessage = '';
   bool _isLoading = false; // Track loading state
 
@@ -29,7 +29,7 @@ class _OfficerLoginState extends State<OfficerLogin> {
         },
         body: jsonEncode({
           'officer_id': _officerIdController.text,
-          'password': _phoneNumberController.text,
+          'password': _passwordController.text,
         }),
       );
 
@@ -94,16 +94,16 @@ class _OfficerLoginState extends State<OfficerLogin> {
             TextField(
               controller: _officerIdController,
               decoration: const InputDecoration(
-                labelText: 'Officer ID',
+                labelText: 'ID เจ้าหน้าที่ฯ',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.person),
               ),
             ),
             const SizedBox(height: 20),
             TextField(
-              controller: _phoneNumberController,
+              controller: _passwordController,
               decoration: const InputDecoration(
-                labelText: 'Phone Number',
+                labelText: 'รหัสผ่าน',
                 border: OutlineInputBorder(),
                 prefixIcon: Icon(Icons.phone),
               ),

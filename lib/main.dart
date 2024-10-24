@@ -9,8 +9,7 @@ import 'screens_officer/search_edit_reward.dart'; // Search reward
 import 'screens_employer/get_rewarded.dart';
 import 'screens_officer/history_of_year.dart';
 import 'screens_officer/FuelTypeStats.dart';
-
-
+import 'screens_officer/Home_officer.dart';
 
 void main() => runApp(const MyApp());
 
@@ -39,19 +38,28 @@ class MyApp extends StatelessWidget {
           final staffId = args?['staff_id'] ?? ''; // Receive staffId
           return GetRewardedScreen(staff_id: staffId);
         },
-        '/login_officer': (context) => const OfficerLogin(), // Officer login screen
+        '/login_officer': (context) =>
+            const OfficerLogin(), // Officer login screen
+        '/officer_home': (context) {
+          final args = ModalRoute.of(context)!.settings.arguments as Map?;
+          final officerId = args?['officer_id'] ?? ''; // Receive officerId
+          return OfficerHomeScreen(officer_id: officerId);
+        },
         '/search_transaction': (context) {
-          final String officerId = ModalRoute.of(context)!.settings.arguments as String;
+          final String officerId =
+              ModalRoute.of(context)!.settings.arguments as String;
           return SearchTransactionScreen(officer_id: officerId);
         },
-          '/search_edit_reward': (context) {
-          final String officerId = ModalRoute.of(context)!.settings.arguments as String;
+        '/search_edit_reward': (context) {
+          final String officerId =
+              ModalRoute.of(context)!.settings.arguments as String;
           return SearchAndEditRewardPage(officer_id: officerId);
         },
-        '/redeem_items': (context) => const RewardManagementPage(), 
-        '/redemption_deleted': (context) => const Search_deleteRedemptionsScreen(), 
-        '/history_of_year':(context) => const AnnualProcessingScreen(),
-        '/FuelTypeStats':(context) => const FuelTypeStatsPage(),
+        '/redeem_items': (context) => const RewardManagementPage(),
+        '/redemption_deleted': (context) =>
+            const Search_deleteRedemptionsScreen(),
+        '/history_of_year': (context) => const AnnualProcessingScreen(),
+        '/FuelTypeStats': (context) => const FuelTypeStatsPage(),
       },
     );
   }

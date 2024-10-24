@@ -121,7 +121,7 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('ยืนยันการทำรายการ'),
-          content: const Text('คุณต้องการยืนยันการรับสินค้าหรือไม่?'),
+          content: const Text('ยืนยันการมอบของรางวัลให้ลูกค้าหรือไม่?'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -216,7 +216,7 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'พนักงาน ID: ${widget.staff_id}',
+              'รหัสพนักงาน: ${widget.staff_id}',
               style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -226,7 +226,7 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'กรอกรหัสของรางวัลเพื่อค้นหา',
+                labelText: 'กรอกรหัสการแลกของรางวัล',
                 border: const OutlineInputBorder(),
                 prefixIcon: const Icon(Icons.search, color: Colors.teal),
               ),
@@ -268,7 +268,7 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'รหัสแลกสินค้า: ${redemption['redemption_id']}',
+                                      'รหัสแลกของรางวัล : ${redemption['redemption_id']}',
                                       style: const TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: 16,
@@ -277,14 +277,13 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
                                     ),
                                     const SizedBox(height: 5),
                                     Text(
-                                        'รหัสลูกค้า: ${redemption['customer_id']}'),
+                                        'ของรางวัล : ${redemption['reward_name']}'),
                                     Text(
-                                        'รหัสของรางวัล: ${redemption['reward_id']}'),
+                                        'จำนวน : ${redemption['quantity']} รางวัล'),
                                     Text(
-                                        'วันที่แลก: ${formatThaiDate(redemption['redemption_date'])}'),
+                                        'รหัสลูกค้า : ${redemption['customer_id']}'),
                                     Text(
-                                        'แต้มที่ใช้: ${redemption['points_used']}'),
-                                    Text('จำนวนของ: ${redemption['quantity']}'),
+                                        'ชื่อ : ${redemption['customer_first_name']} ${redemption['customer_last_name']}'),
                                     const SizedBox(height: 10),
                                     Divider(color: Colors.grey[400]),
                                     Align(
@@ -298,7 +297,8 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
                                           backgroundColor:
                                               Colors.teal, // เปลี่ยนสีของปุ่ม
                                         ),
-                                        child: const Text('ยืนยันรับสินค้า'),
+                                        child:
+                                            const Text('ยืนยันการมอบของรางวัล'),
                                       ),
                                     ),
                                   ],
