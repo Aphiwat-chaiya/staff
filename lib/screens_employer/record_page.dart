@@ -4,6 +4,7 @@ import 'package:flutter_application_12/screens_employer/get_rewarded.dart';
 import 'package:flutter_application_12/screens_employer/history_page.dart';
 import 'package:flutter_application_12/screens_employer/login_FuelTransaction.dart';
 import 'package:flutter_application_12/screens_employer/slip.dart';
+import 'package:auto_size_text/auto_size_text.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -193,6 +194,85 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
     }
   }
 
+  Future<void> confirmTransaction() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(15), // มุมโค้งของกล่อง AlertDialog
+          ),
+          title: const Text(
+            'ตรวจสอบข้อมูลก่อนบันทึก',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.blueAccent, // เปลี่ยนสีหัวข้อ
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 5), // เพิ่มช่องว่างระหว่างข้อความ
+                child: Text(
+                  'เบอร์โทรลูกค้าสหกรณ์ : ${phoneController.text}',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Text(
+                  'ประเภทน้ำมัน : $selectedFuelType',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 5),
+                child: Text(
+                  'ราคา : ${priceController.text} บาท',
+                  style: const TextStyle(fontSize: 16),
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'ยกเลิก',
+                style: TextStyle(
+                    color: Color.fromARGB(
+                        255, 31, 152, 53)), // เปลี่ยนสีปุ่มยกเลิก
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green, // เปลี่ยนสีปุ่มยืนยัน
+                shape: RoundedRectangleBorder(
+                  borderRadius:
+                      BorderRadius.circular(10), // มุมโค้งของปุ่มยืนยัน
+                ),
+              ),
+              child: const Text(
+                'ยืนยัน',
+                style: TextStyle(color: Colors.white), // สีข้อความปุ่มยืนยัน
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                submitTransaction(); // เรียกใช้ฟังก์ชันบันทึกข้อมูลเมื่อยืนยัน
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void _showSnackBar(String message) {
     ScaffoldMessenger.of(context)
         .showSnackBar(SnackBar(content: Text(message)));
@@ -228,15 +308,15 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
           });
         },
         child: Container(
-          padding: const EdgeInsets.all(10.0), // ปรับขนาด padding ที่นี่
+          padding: const EdgeInsets.all(10.0),
           decoration: BoxDecoration(
             color: selectedFuelType == fuelType
-                ? const Color.fromARGB(255, 243, 33, 33)
+                ? const Color.fromARGB(255, 44, 144, 49)
                 : Colors.white,
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: selectedFuelType == fuelType
-                  ? const Color.fromARGB(255, 243, 33, 33)
+                  ? const Color.fromARGB(255, 43, 161, 49)
                   : Colors.grey,
             ),
           ),
@@ -244,19 +324,21 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon,
-                  size: 30, // ปรับขนาดไอคอนที่นี่
+                  size: 30,
                   color: selectedFuelType == fuelType
                       ? Colors.white
                       : Colors.blue),
-              const SizedBox(height: 15), // ปรับขนาดที่นี่
-              Text(
+              const SizedBox(height: 10),
+              AutoSizeText(
                 fuelType,
                 style: TextStyle(
                   color:
                       selectedFuelType == fuelType ? Colors.white : Colors.blue,
-                  fontSize: 12, // ปรับขนาดตัวอักษรที่นี่
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
+                maxLines: 2, // ข้อความจะแสดงได้ไม่เกิน 2 บรรทัด
+                minFontSize: 10, // ขนาดฟอนต์ต่ำสุดที่จะปรับลดได้
                 textAlign: TextAlign.center,
               ),
             ],
@@ -280,7 +362,15 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('บันทึกการขายน้ำมัน'),
-        backgroundColor: Colors.deepOrange,
+        backgroundColor: const Color.fromARGB(255, 67, 176, 31),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.bluetooth),
+            onPressed: () {
+              connectToBluetooth(); // เรียกฟังก์ชันเชื่อมต่อ Bluetooth ที่คุณมีอยู่แล้ว
+            },
+          ),
+        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -288,7 +378,7 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
           children: <Widget>[
             DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.deepOrange,
+                color: const Color.fromARGB(255, 67, 176, 31),
               ),
               child: Text(
                 'เมนู',
@@ -416,21 +506,8 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
                           .toList(),
                     )
                   : const Text('ไม่มีอุปกรณ์ Bluetooth'),
-              const SizedBox(height: 10),
               ElevatedButton(
-                onPressed: connectToBluetooth,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.bluetooth_connected),
-                    SizedBox(width: 8),
-                    Text('เชื่อมต่อ Bluetooth'),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: submitTransaction,
+                onPressed: confirmTransaction,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
@@ -447,5 +524,3 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
     );
   }
 }
-
-

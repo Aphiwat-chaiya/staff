@@ -9,7 +9,8 @@ class TransactionHistoryScreen extends StatefulWidget {
   const TransactionHistoryScreen({super.key, required this.staffId});
 
   @override
-  TransactionHistoryScreenState createState() => TransactionHistoryScreenState();
+  TransactionHistoryScreenState createState() =>
+      TransactionHistoryScreenState();
 }
 
 class TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
@@ -25,16 +26,19 @@ class TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   Future<void> fetchTransactions() async {
     try {
       // เรียกใช้ API ของคุณโดยใช้ staffId
-      final response = await http.get(Uri.parse('$baseUrl/staff_record/transactions/${widget.staffId}'));
+      final response = await http.get(
+          Uri.parse('$baseUrl/staff_record/transactions/${widget.staffId}'));
 
       if (response.statusCode == 200) {
         setState(() {
           transactions = json.decode(response.body);
           // เรียงลำดับข้อมูลจากล่าสุดไปเก่า
-          transactions.sort((a, b) => DateTime.parse(b['transaction_date']).compareTo(DateTime.parse(a['transaction_date'])));
+          transactions.sort((a, b) => DateTime.parse(b['transaction_date'])
+              .compareTo(DateTime.parse(a['transaction_date'])));
         });
       } else {
-        _showSnackBar('ไม่สามารถดึงข้อมูลประวัติการทำรายการได้: ${response.reasonPhrase}');
+        _showSnackBar(
+            'ไม่สามารถดึงข้อมูลประวัติการทำรายการได้: ${response.reasonPhrase}');
       }
     } catch (e) {
       _showSnackBar('เกิดข้อผิดพลาดในการดึงข้อมูล: $e');
@@ -42,20 +46,31 @@ class TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   String _formatDate(String dateString) {
     // แปลงเป็น DateTime
     DateTime dateTime = DateTime.parse(dateString);
-    
+
     // ปรับเวลาเป็นเวลาไทย (UTC+7)
     dateTime = dateTime.add(Duration(hours: 7));
 
     // สร้างวันที่ในรูปแบบที่ต้องการ
     final monthNames = [
-      'ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-      'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'
+      'ม.ค.',
+      'ก.พ.',
+      'มี.ค.',
+      'เม.ย.',
+      'พ.ค.',
+      'มิ.ย.',
+      'ก.ค.',
+      'ส.ค.',
+      'ก.ย.',
+      'ต.ค.',
+      'พ.ย.',
+      'ธ.ค.'
     ];
 
     String day = DateFormat('dd').format(dateTime);
@@ -115,11 +130,13 @@ class TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                           const SizedBox(height: 8.0),
                           Row(
                             children: [
-                              Icon(Icons.local_gas_station, color: Colors.deepOrange),
+                              Icon(Icons.local_gas_station,
+                                  color: Colors.deepOrange),
                               const SizedBox(width: 5),
                               Text(
                                 'ประเภทน้ำมัน: ${transaction['fuel_type_name']}',
-                                style: TextStyle(fontSize: 14, color: Colors.black87),
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.black87),
                               ),
                             ],
                           ),
@@ -130,18 +147,21 @@ class TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                               const SizedBox(width: 5),
                               Text(
                                 'จำนวนเงิน: ${transaction['points_earned']} บาท',
-                                style: TextStyle(fontSize: 14, color: Colors.black87),
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.black87),
                               ),
                             ],
                           ),
                           const SizedBox(height: 5),
                           Row(
                             children: [
-                              Icon(Icons.confirmation_number, color: Colors.blue),
+                              Icon(Icons.confirmation_number,
+                                  color: Colors.blue),
                               const SizedBox(width: 5),
                               Text(
                                 'รหัสธุรกรรม: ${transaction['transaction_id']}',
-                                style: TextStyle(fontSize: 14, color: Colors.black87),
+                                style: TextStyle(
+                                    fontSize: 14, color: Colors.black87),
                               ),
                             ],
                           ),
