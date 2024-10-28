@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart'; // เพิ่มการนำเข้า
 
 class OfficerHomeScreen extends StatefulWidget {
@@ -19,16 +19,19 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
   @override
   void initState() {
     super.initState();
-    _latestTransactions = Future.value([]); // กำหนดค่าเริ่มต้นให้เป็น List ว่าง เพื่อหลีกเลี่ยง LateInitializationError
+    _latestTransactions = Future.value(
+        []); // กำหนดค่าเริ่มต้นให้เป็น List ว่าง เพื่อหลีกเลี่ยง LateInitializationError
     initializeDateFormatting('th_TH', null).then((_) {
       setState(() {
-        _latestTransactions = _fetchTransactions(); // ดึงข้อมูลหลังจาก locale พร้อมใช้งาน
+        _latestTransactions =
+            _fetchTransactions(); // ดึงข้อมูลหลังจาก locale พร้อมใช้งาน
       });
     });
   }
 
   Future<List<dynamic>> _fetchTransactions() async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:3000/transactions'));
+    final response =
+        await http.get(Uri.parse('http://10.0.2.2:3000/transactions'));
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -39,7 +42,8 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
 
   String formatTransactionDate(String date) {
     DateTime parsedDate = DateTime.parse(date);
-    return DateFormat('d MMMM y', 'th_TH').format(parsedDate); // แสดงวันที่ในรูปแบบไทย
+    return DateFormat('d MMMM y', 'th_TH')
+        .format(parsedDate); // แสดงวันที่ในรูปแบบไทย
   }
 
   void _logout() {
@@ -71,44 +75,77 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.search, color: Colors.teal),
+              title: const Text('การทำธุรกรรม'),
+              onTap: () {
+                setState(() {
+                  _latestTransactions =
+                      _fetchTransactions(); // รีเฟรชข้อมูลการทำธุรกรรม
+                });
+                Navigator.pop(context); // ปิด Drawer
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.search, color: Colors.teal),
               title: const Text('Transactions'),
               onTap: () {
-                Navigator.pushNamed(context, '/search_transaction', arguments: widget.officer_id);
+                Navigator.pushNamed(context, '/search_transaction',
+                    arguments: widget.officer_id);
               },
             ),
             ListTile(
               leading: const Icon(Icons.redeem, color: Colors.teal),
               title: const Text('Rewards'),
               onTap: () {
-                Navigator.pushNamed(context, '/redeem_items', arguments: widget.officer_id);
+                Navigator.pushNamed(context, '/redeem_items',
+                    arguments: widget.officer_id);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.redeem, color: Colors.teal),
+              title: const Text('New'),
+              onTap: () {
+                Navigator.pushNamed(context, '/image_for_new',
+                    arguments: widget.officer_id);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.redeem, color: Colors.teal),
+              title: const Text('manage images'),
+              onTap: () {
+                Navigator.pushNamed(context, '/manage_images',
+                    arguments: widget.officer_id);
               },
             ),
             ListTile(
               leading: const Icon(Icons.edit, color: Colors.teal),
               title: const Text('Edit Reward'),
               onTap: () {
-                Navigator.pushNamed(context, '/search_edit_reward', arguments: widget.officer_id);
+                Navigator.pushNamed(context, '/search_edit_reward',
+                    arguments: widget.officer_id);
               },
             ),
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.teal),
               title: const Text('Deleted Redemption'),
               onTap: () {
-                Navigator.pushNamed(context, '/redemption_deleted', arguments: widget.officer_id);
+                Navigator.pushNamed(context, '/redemption_deleted',
+                    arguments: widget.officer_id);
               },
             ),
             ListTile(
               leading: const Icon(Icons.bar_chart, color: Colors.teal),
               title: const Text('Yearly History'),
               onTap: () {
-                Navigator.pushNamed(context, '/history_of_year', arguments: widget.officer_id);
+                Navigator.pushNamed(context, '/history_of_year',
+                    arguments: widget.officer_id);
               },
             ),
             ListTile(
               leading: const Icon(Icons.analytics, color: Colors.teal),
               title: const Text('FuelType Stats'),
               onTap: () {
-                Navigator.pushNamed(context, '/FuelTypeStats', arguments: widget.officer_id);
+                Navigator.pushNamed(context, '/FuelTypeStats',
+                    arguments: widget.officer_id);
               },
             ),
             const Divider(),
@@ -129,7 +166,10 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
               const SizedBox(height: 20),
               Text(
                 'Latest Transactions:',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.teal, fontWeight: FontWeight.bold),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge
+                    ?.copyWith(color: Colors.teal, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 10),
               FutureBuilder<List<dynamic>>(
@@ -157,10 +197,13 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
                             borderRadius: BorderRadius.circular(15),
                           ),
                           child: ListTile(
-                            leading: const Icon(Icons.monetization_on, color: Colors.green),
+                            leading: const Icon(Icons.monetization_on,
+                                color: Colors.green),
                             title: Text(
                               'Transaction ID: ${transaction['transaction_id']}',
-                              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.teal),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal),
                             ),
                             subtitle: Text(
                               'Customer ID: ${transaction['customer_id']}\n'
@@ -169,7 +212,8 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
                               'Date: ${formatTransactionDate(transaction['transaction_date'])}', // แปลงวันที่เป็นรูปแบบไทย
                               style: const TextStyle(color: Colors.black54),
                             ),
-                            trailing: const Icon(Icons.arrow_forward_ios, color: Colors.teal),
+                            trailing: const Icon(Icons.arrow_forward_ios,
+                                color: Colors.teal),
                           ),
                         );
                       },

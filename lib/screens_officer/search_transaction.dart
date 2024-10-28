@@ -113,7 +113,7 @@ class _SearchTransactionScreenState extends State<SearchTransactionScreen> {
                     ),
                     TextField(
                       controller: points_earnedController,
-                      decoration: const InputDecoration(labelText: 'จำนวนคะแนน'),
+                      decoration: const InputDecoration(labelText: 'จำนวนแต้มสะสม'),
                       keyboardType: TextInputType.number,
                     ),
                   ],
@@ -225,8 +225,7 @@ class _SearchTransactionScreenState extends State<SearchTransactionScreen> {
                             leading: const Icon(Icons.payment, color: Colors.green),
                             title: Text('รหัสธุรกรรม: ${transaction['transaction_id']}'),
                             subtitle: Text(
-                              'จำนวนคะแนน: ${transaction['points_earned']} | ประเภทน้ำมัน: ${fuelTypesMap[transaction['fuel_type_id'].toString()] ?? 'Unknown'}' +
-                              (transaction['officer_id'] != null ? ' | แก้ไขโดย ID: ${transaction['officer_id']}' : ''),
+                              'จำนวนคะแนน: ${transaction['points_earned']} | ประเภทน้ำมัน: ${fuelTypesMap[transaction['fuel_type_id'].toString()] ?? 'Unknown'}${transaction['officer_id'] != null ? ' | แก้ไขโดย ID: ${transaction['officer_id']}' : ''}',
                             ),
                             trailing: IconButton(
                               icon: const Icon(Icons.edit, color: Colors.blue),

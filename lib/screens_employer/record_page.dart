@@ -89,6 +89,13 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
     }
   }
 
+  void resetFields() {
+    phoneController.clear(); // รีเซ็ตค่าใน TextField ของหมายเลขโทรศัพท์
+    priceController.clear(); // รีเซ็ตค่าใน TextField ของราคา
+    selectedFuelType = ''; // รีเซ็ตประเภทน้ำมันที่เลือก
+    setState(() {}); // อัปเดต UI
+  }
+
   Future<void> scanQRCode(BuildContext context) async {
     Navigator.push(
       context,
@@ -163,7 +170,8 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
           const dividendPercentage = 0.01;
           final dividend = price * dividendPercentage;
 
-          Navigator.push(
+          // รับค่าจากหน้า ReceiptScreen
+          final resetNeeded = await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => ReceiptScreen(
@@ -183,6 +191,10 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
               ),
             ),
           );
+
+          if (resetNeeded == true) {
+            resetFields();
+          }
         } else {
           _showSnackBar('ไม่สามารถดึงข้อมูลสมาชิกหรือพนักงานได้.');
         }
@@ -334,7 +346,7 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
                 style: TextStyle(
                   color:
                       selectedFuelType == fuelType ? Colors.white : Colors.blue,
-                  fontSize: 14,
+                  fontSize: 13,
                   fontWeight: FontWeight.bold,
                 ),
                 maxLines: 2, // ข้อความจะแสดงได้ไม่เกิน 2 บรรทัด
@@ -363,14 +375,6 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
       appBar: AppBar(
         title: const Text('บันทึกการขายน้ำมัน'),
         backgroundColor: const Color.fromARGB(255, 67, 176, 31),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.bluetooth),
-            onPressed: () {
-              connectToBluetooth(); // เรียกฟังก์ชันเชื่อมต่อ Bluetooth ที่คุณมีอยู่แล้ว
-            },
-          ),
-        ],
       ),
       drawer: Drawer(
         child: ListView(
@@ -442,11 +446,36 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
                   Expanded(
                     child: TextField(
                       controller: phoneController,
-                      decoration: InputDecoration(
-                        labelText: 'เบอร์โทร',
-                        prefixIcon: const Icon(Icons.phone),
-                      ),
                       keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                        labelText: 'เบอร์โทรลูกค้า',
+                        labelStyle: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
+                        prefixIcon: Icon(
+                          Icons.phone,
+                          color: Colors.green,
+                        ),
+                        filled: true,
+                        fillColor: Colors.white,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Colors.green,
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: Colors.greenAccent,
+                            width: 2.0,
+                          ),
+                        ),
+                      ),
+                      style: TextStyle(color: Colors.green.shade800),
                     ),
                   ),
                   IconButton(
@@ -471,7 +500,7 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
                   _buildFuelButton('ดีเซล B10', Icons.local_gas_station),
                   _buildFuelButton('แก๊สโซฮอล์ E20', Icons.local_gas_station),
                   _buildFuelButton('แก๊สโซฮอล์ 91', Icons.local_gas_station),
-                  _buildFuelButton('แก๊สโซฮอล์ 95', Icons.local_gas_station),
+                  _buildFuelButton('แก๊สโซฮอล์ E95', Icons.local_gas_station),
                   _buildFuelButton(
                       'ซูเปอร์พาวเวอร์ดีเซล B7', Icons.local_gas_station),
                   _buildFuelButton(
@@ -481,12 +510,57 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
               const SizedBox(height: 10),
               TextField(
                 controller: priceController,
-                decoration: InputDecoration(
-                  labelText: 'จำนวนเงิน',
-                  prefixIcon: const Icon(Icons.money),
-                ),
                 keyboardType: TextInputType.number,
-                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                style: TextStyle(
+                  fontSize: 20, // ขนาดตัวอักษรใหญ่ขึ้น
+                  fontWeight: FontWeight.bold, // ตัวอักษรหนาขึ้น
+                  color: Colors.black, // สีตัวอักษร
+                ),
+                decoration: InputDecoration(
+                  labelText: 'จำนวนเงิน (บาท)',
+                  labelStyle: TextStyle(
+                    fontSize: 18,
+                    color: Colors.green, // สีของ label
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Colors.green, // สีกรอบเมื่อไม่ได้เลือกฟิลด์
+                      width: 2.0,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: Colors.blue, // สีกรอบเมื่อเลือกฟิลด์
+                      width: 2.5,
+                    ),
+                  ),
+                  filled: true,
+                  fillColor: Color.fromARGB(255, 240, 255, 240), // สีพื้นหลัง
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: 20, horizontal: 15), // ระยะห่างด้านใน
+                ),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green, // เปลี่ยนสีปุ่มบันทึกการขาย
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // มุมโค้งของปุ่ม
+                  ),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 15), // ขนาดปุ่ม
+                ),
+                onPressed: confirmTransaction,
+                child: Text(
+                  'บันทึกการขาย',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               const SizedBox(height: 10),
               _devices.isNotEmpty
@@ -506,15 +580,30 @@ class _FuelTransactionScreenState extends State<FuelTransactionScreen> {
                           .toList(),
                     )
                   : const Text('ไม่มีอุปกรณ์ Bluetooth'),
-              ElevatedButton(
-                onPressed: confirmTransaction,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Icon(Icons.save),
-                    SizedBox(width: 8),
-                    Text('บันทึกการขาย'),
-                  ],
+              const SizedBox(height: 10),
+              ///////////////////////////////
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  side:
+                      BorderSide(color: Colors.blueAccent, width: 2), // เส้นขอบ
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // มุมโค้งของปุ่ม
+                  ),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 20, vertical: 15), // ขนาดปุ่ม
+                ),
+                onPressed: connectToBluetooth,
+                icon: Icon(
+                  Icons.bluetooth,
+                  color: Colors.blueAccent,
+                ),
+                label: Text(
+                  'เชื่อมต่อ Bluetooth',
+                  style: TextStyle(
+                    color: Colors.blueAccent,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],

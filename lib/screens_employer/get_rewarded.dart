@@ -223,29 +223,40 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
                   color: Colors.teal),
             ),
             const SizedBox(height: 20),
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                labelText: 'กรอกรหัสการแลกของรางวัล',
-                border: const OutlineInputBorder(),
-                prefixIcon: const Icon(Icons.search, color: Colors.teal),
-              ),
-              onChanged: (value) {
-                if (value.isNotEmpty) {
-                  _filterRedemptions();
-                  if (isScanning) {
-                    controller?.pauseCamera();
-                    setState(() {
-                      isScanning = false;
-                    });
-                    Navigator.of(context).pop();
-                  }
-                } else {
-                  setState(() {
-                    filteredRedemptions = [];
-                  });
-                }
-              },
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      labelText: 'กรอกรหัสการแลกของรางวัล',
+                      border: const OutlineInputBorder(),
+                      prefixIcon: const Icon(Icons.search, color: Colors.teal),
+                    ),
+                    onChanged: (value) {
+                      if (value.isNotEmpty) {
+                        _filterRedemptions();
+                        if (isScanning) {
+                          controller?.pauseCamera();
+                          setState(() {
+                            isScanning = false;
+                          });
+                          Navigator.of(context).pop();
+                        }
+                      } else {
+                        setState(() {
+                          filteredRedemptions = [];
+                        });
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10),
+                IconButton(
+                  icon: const Icon(Icons.qr_code_scanner, color: Colors.teal),
+                  onPressed: _showQRCodeScanner,
+                ),
+              ],
             ),
             const SizedBox(height: 20),
             Expanded(
@@ -260,8 +271,7 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
                             return Card(
                               margin: const EdgeInsets.symmetric(vertical: 8),
                               elevation: 4,
-                              color: Colors
-                                  .lightGreen[50], // เปลี่ยนสีพื้นหลังของ Card
+                              color: Colors.lightGreen[50],
                               child: Padding(
                                 padding: const EdgeInsets.all(12.0),
                                 child: Column(
@@ -294,8 +304,7 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
                                               redemption['redemption_id']);
                                         },
                                         style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Colors.teal, // เปลี่ยนสีของปุ่ม
+                                          backgroundColor: Colors.teal,
                                         ),
                                         child:
                                             const Text('ยืนยันการมอบของรางวัล'),
@@ -307,16 +316,6 @@ class GetRewardedScreenState extends State<GetRewardedScreen> {
                             );
                           },
                         ),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton.icon(
-              onPressed: _showQRCodeScanner,
-              icon: const Icon(Icons.qr_code_scanner, color: Colors.white),
-              label: const Text('แสกน QR Code',
-                  style: TextStyle(color: Colors.white)),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal, // เปลี่ยนสีของปุ่ม
-              ),
             ),
           ],
         ),
