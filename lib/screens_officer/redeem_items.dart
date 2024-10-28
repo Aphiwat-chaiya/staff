@@ -25,6 +25,45 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
     });
   }
 
+  Future<void> _showConfirmationDialog() async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('ยืนยันการเพิ่มของรางวัล'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('ชื่อรางวัล: ${_rewardNameController.text}'),
+              const SizedBox(height: 10),
+              Text('จำนวนแต้มที่ใช้แลก: ${_pointsRequiredController.text}'),
+              const SizedBox(height: 10),
+              Text('จำนวนของรางวัล: ${_quantityController.text}'),
+              const SizedBox(height: 10),
+              Text('คำอธิบาย: ${_descriptionController.text}'),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('ยกเลิก', style: TextStyle(color: Colors.red)),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _submitReward();
+              },
+              child: const Text('ยืนยัน', style: TextStyle(color: Colors.green)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> _submitReward() async {
     if (_rewardNameController.text.isEmpty ||
         _pointsRequiredController.text.isEmpty ||
@@ -32,7 +71,7 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
         _descriptionController.text.isEmpty ||
         _image == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please fill all the fields and select an image'),
+        content: Text('กรุณากรอกข้อมูลให้ครบทุกช่องและเลือกรูปภาพ'),
         backgroundColor: Colors.red,
       ));
       return;
@@ -45,16 +84,14 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://10.0.2.2:3000/rewards'),
+      Uri.parse('http://192.168.1.42:3000/rewards'),
     );
 
-    // เพิ่มข้อมูล reward
     request.fields['reward_name'] = rewardName;
     request.fields['points_required'] = pointsRequired;
     request.fields['quantity'] = quantity;
     request.fields['description'] = description;
 
-    // เพิ่มรูปภาพ
     if (_image != null) {
       request.files.add(await http.MultipartFile.fromPath('image', _image!.path));
     }
@@ -64,10 +101,9 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
 
       if (response.statusCode == 201) {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Reward added successfully!'),
+          content: Text('ตั้งค่าของรางวัลสำเร็จ!'),
           backgroundColor: Colors.green,
         ));
-        // Clear the form
         _rewardNameController.clear();
         _pointsRequiredController.clear();
         _quantityController.clear();
@@ -78,13 +114,13 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
       } else {
         final responseBody = await response.stream.bytesToString();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Failed to add reward: $responseBody'),
+          content: Text('ไม่สามารถเพิ่มของรางวัลได้: $responseBody'),
           backgroundColor: Colors.red,
         ));
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('An error occurred: $e'),
+        content: Text('เกิดข้อผิดพลาด: $e'),
         backgroundColor: Colors.red,
       ));
     }
@@ -94,7 +130,7 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reward Management'),
+        title: const Text('เพิ่มของรางวัล'),
         backgroundColor: Colors.blue[800],
       ),
       body: Padding(
@@ -115,7 +151,7 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
                           border: Border.all(color: Colors.grey, width: 2),
                         ),
                         child: const Center(
-                          child: Icon(Icons.camera_alt, size: 50, color: Colors.blueGrey),
+                          child: Icon(Icons.image, size: 50, color: Colors.blueGrey),
                         ),
                       )
                     : ClipRRect(
@@ -132,7 +168,7 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
               TextField(
                 controller: _rewardNameController,
                 decoration: const InputDecoration(
-                  labelText: 'Reward Name',
+                  labelText: 'ชื่อรางวัล',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.card_giftcard),
                 ),
@@ -141,7 +177,7 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
               TextField(
                 controller: _pointsRequiredController,
                 decoration: const InputDecoration(
-                  labelText: 'Points Required',
+                  labelText: 'จำนวนแต้มที่ใช้แลก',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.stars),
                 ),
@@ -151,7 +187,7 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
               TextField(
                 controller: _quantityController,
                 decoration: const InputDecoration(
-                  labelText: 'Quantity',
+                  labelText: 'จำนวนของรางวัล',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.production_quantity_limits),
                 ),
@@ -161,7 +197,7 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
               TextField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
-                  labelText: 'Description',
+                  labelText: 'คำอธิบาย',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.description),
                 ),
@@ -169,8 +205,8 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
               ),
               const SizedBox(height: 20),
               ElevatedButton.icon(
-                onPressed: _submitReward,
-                icon: const Icon(Icons.send),
+                onPressed: _showConfirmationDialog,
+                icon: const Icon(Icons.check),
                 label: const Text('Submit Reward'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue[800],

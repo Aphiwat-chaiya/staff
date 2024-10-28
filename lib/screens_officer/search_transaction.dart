@@ -33,7 +33,7 @@ class _SearchTransactionScreenState extends State<SearchTransactionScreen> {
 
   Future<List<dynamic>> _fetchTransactions([String query = '']) async {
     final response = await http.get(Uri.parse(
-        'http://10.0.2.2:3000/search_transactions?search_type=$selectedSearchType&query=$query'));
+        'http://192.168.1.42:3000/search_transactions?search_type=$selectedSearchType&query=$query'));
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -43,7 +43,7 @@ class _SearchTransactionScreenState extends State<SearchTransactionScreen> {
   }
 
   Future<List<Map<String, dynamic>>> _fetchFuelTypes() async { 
-    final response = await http.get(Uri.parse('http://10.0.2.2:3000/fuel_types'));
+    final response = await http.get(Uri.parse('http://192.168.1.42:3000/fuel_types'));
 
     if (response.statusCode == 200) {
       List<dynamic> data = jsonDecode(response.body);
@@ -61,7 +61,7 @@ class _SearchTransactionScreenState extends State<SearchTransactionScreen> {
 
   Future<void> _updateTransaction(String transactionId, String fuelTypeId, String points_earned) async {
     final response = await http.put(
-      Uri.parse('http://10.0.2.2:3000/transactions/$transactionId'),
+      Uri.parse('http://192.168.1.42:3000/transactions/$transactionId'),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({
         'fuel_type_id': fuelTypeId,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_12/screens_officer/redeem_items.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
@@ -10,7 +11,8 @@ class SearchAndEditRewardPage extends StatefulWidget {
   const SearchAndEditRewardPage({super.key, required this.officer_id});
 
   @override
-  _SearchAndEditRewardPageState createState() => _SearchAndEditRewardPageState();
+  _SearchAndEditRewardPageState createState() =>
+      _SearchAndEditRewardPageState();
 }
 
 class _SearchAndEditRewardPageState extends State<SearchAndEditRewardPage> {
@@ -25,7 +27,8 @@ class _SearchAndEditRewardPageState extends State<SearchAndEditRewardPage> {
   }
 
   Future<List<dynamic>> _fetchRewards([String query = '']) async {
-    final response = await http.get(Uri.parse('http://10.0.2.2:3000/rewards?query=$query'));
+    final response = await http
+        .get(Uri.parse('http://192.168.1.42:3000/rewards?query=$query'));
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -45,17 +48,24 @@ class _SearchAndEditRewardPageState extends State<SearchAndEditRewardPage> {
     }
   }
 
-  Future<void> _updateReward(String rewardId, String rewardName, int pointsRequired, String description, int quantity, File? imageFile) async {
-    var uri = Uri.parse('http://10.0.2.2:3000/rewards/$rewardId');
+  Future<void> _updateReward(
+      String rewardId,
+      String rewardName,
+      int pointsRequired,
+      String description,
+      int quantity,
+      File? imageFile) async {
+    var uri = Uri.parse('http://192.168.1.42:3000/rewards/$rewardId');
     var request = http.MultipartRequest('PUT', uri);
 
     request.fields['reward_name'] = rewardName;
     request.fields['points_required'] = pointsRequired.toString();
     request.fields['description'] = description;
-    request.fields['quantity'] = quantity.toString();  // Added quantity field
+    request.fields['quantity'] = quantity.toString(); // Added quantity field
 
     if (imageFile != null) {
-      request.files.add(await http.MultipartFile.fromPath('image', imageFile.path));
+      request.files
+          .add(await http.MultipartFile.fromPath('image', imageFile.path));
     }
 
     var response = await request.send();
@@ -72,8 +82,18 @@ class _SearchAndEditRewardPageState extends State<SearchAndEditRewardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Search and Edit Rewards'),
+        title: const Text('ตั้งค่าของรางวัล'),
         backgroundColor: Colors.blue[800],
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () {
+              setState(() {
+                _rewards = _fetchRewards(_searchController.text);
+              });
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -82,7 +102,7 @@ class _SearchAndEditRewardPageState extends State<SearchAndEditRewardPage> {
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
-                labelText: 'Search Rewards',
+                labelText: 'ค้นหารางวัล',
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),
                   onPressed: () {
@@ -119,17 +139,25 @@ class _SearchAndEditRewardPageState extends State<SearchAndEditRewardPage> {
                           child: ListTile(
                             leading: ClipOval(
                               child: Image.network(
-                                'http://10.0.2.2:3000/uploads/${reward['image']}',
+                                'http://192.168.1.42:3000/uploads/${reward['image']}',
                                 width: 50,
                                 height: 50,
                                 fit: BoxFit.cover,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.image_not_supported, size: 50);
+                                  return const Icon(Icons.image_not_supported,
+                                      size: 50);
                                 },
                               ),
                             ),
                             title: Text(reward['reward_name']),
-                            subtitle: Text('Points: ${reward['points_required']}'),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Points: ${reward['points_required']}'),
+                                Text('Quantity: ${reward['quantity']}'),
+                                Text('Description: ${reward['description']}'),
+                              ],
+                            ),
                             trailing: IconButton(
                               icon: const Icon(Icons.edit, color: Colors.blue),
                               onPressed: () {
@@ -147,54 +175,73 @@ class _SearchAndEditRewardPageState extends State<SearchAndEditRewardPage> {
           ],
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const RewardManagementPage(),
+            ),
+          );
+        },
+        backgroundColor: Colors.blue[800],
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
   void showEditDialog(Map<String, dynamic> reward) {
-    final TextEditingController rewardNameController = TextEditingController(text: reward['reward_name']);
-    final TextEditingController pointsController = TextEditingController(text: reward['points_required'].toString());
-    final TextEditingController descriptionController = TextEditingController(text: reward['description']);
-    final TextEditingController quantityController = TextEditingController(text: reward['quantity'].toString()); // Added quantity controller
+    final TextEditingController rewardNameController =
+        TextEditingController(text: reward['reward_name']);
+    final TextEditingController pointsController =
+        TextEditingController(text: reward['points_required'].toString());
+    final TextEditingController descriptionController =
+        TextEditingController(text: reward['description']);
+    final TextEditingController quantityController = TextEditingController(
+        text: reward['quantity'].toString()); // Added quantity controller
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Edit Reward'),
+          title: const Text('แก้ไข ของรางวัล'),
           content: SingleChildScrollView(
             child: Column(
               children: [
                 TextField(
                   controller: rewardNameController,
-                  decoration: const InputDecoration(labelText: 'Reward Name'),
+                  decoration: const InputDecoration(labelText: 'ชื่อรางวัล'),
                 ),
                 TextField(
                   controller: pointsController,
-                  decoration: const InputDecoration(labelText: 'Points Required'),
+                  decoration:
+                      const InputDecoration(labelText: 'จำนวนแต้มที่ใช้แลก'),
                   keyboardType: TextInputType.number,
                 ),
                 TextField(
-                  controller: descriptionController,
-                  decoration: const InputDecoration(labelText: 'Description'),
+                  controller: quantityController, // Added quantity input
+                  decoration:
+                      const InputDecoration(labelText: 'จำนวนของรางวัล'),
+                  keyboardType: TextInputType.number, // For number input
                 ),
                 TextField(
-                  controller: quantityController,  // Added quantity input
-                  decoration: const InputDecoration(labelText: 'Quantity'),
-                  keyboardType: TextInputType.number,  // For number input
+                  controller: descriptionController,
+                  decoration: const InputDecoration(labelText: 'คำอธิบาย'),
                 ),
                 const SizedBox(height: 10),
                 _selectedImage != null
                     ? Image.file(_selectedImage!, height: 100)
                     : Image.network(
-                        'http://10.0.2.2:3000/uploads/${reward['image']}',
+                        'http://192.168.1.42:3000/uploads/${reward['image']}',
                         height: 100,
                       ),
                 ElevatedButton(
                   onPressed: _pickImage,
-                  child: const Text('Change Image'),
                   style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.white, backgroundColor: Colors.blue[800],
+                    foregroundColor: Colors.white,
+                    backgroundColor: Colors.blue[800],
                   ),
+                  child: const Text('Change Image'),
                 ),
               ],
             ),
@@ -214,7 +261,7 @@ class _SearchAndEditRewardPageState extends State<SearchAndEditRewardPage> {
                     rewardNameController.text,
                     int.parse(pointsController.text),
                     descriptionController.text,
-                    int.parse(quantityController.text),  // Send updated quantity
+                    int.parse(quantityController.text), // Send updated quantity
                     _selectedImage,
                   );
                   Navigator.of(context).pop();

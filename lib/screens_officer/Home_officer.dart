@@ -10,10 +10,10 @@ class OfficerHomeScreen extends StatefulWidget {
   const OfficerHomeScreen({super.key, required this.officer_id});
 
   @override
-  _OfficerHomeScreenState createState() => _OfficerHomeScreenState();
+  OfficerHomeScreenState createState() => OfficerHomeScreenState();
 }
 
-class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
+class OfficerHomeScreenState extends State<OfficerHomeScreen> {
   late Future<List<dynamic>> _latestTransactions;
 
   @override
@@ -31,7 +31,7 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
 
   Future<List<dynamic>> _fetchTransactions() async {
     final response =
-        await http.get(Uri.parse('http://10.0.2.2:3000/transactions'));
+        await http.get(Uri.parse('http://192.168.1.42:3000/transactions'));
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);
@@ -86,7 +86,7 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.search, color: Colors.teal),
-              title: const Text('Transactions'),
+              title: const Text('ค้นหาธุรกรรม'),
               onTap: () {
                 Navigator.pushNamed(context, '/search_transaction',
                     arguments: widget.officer_id);
@@ -94,22 +94,14 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.redeem, color: Colors.teal),
-              title: const Text('Rewards'),
-              onTap: () {
-                Navigator.pushNamed(context, '/redeem_items',
-                    arguments: widget.officer_id);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.redeem, color: Colors.teal),
-              title: const Text('New'),
+              title: const Text('ข่าวสาร'),
               onTap: () {
                 Navigator.pushNamed(context, '/image_for_new',
                     arguments: widget.officer_id);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.redeem, color: Colors.teal),
+              leading: const Icon(Icons.newspaper, color: Colors.teal),
               title: const Text('manage images'),
               onTap: () {
                 Navigator.pushNamed(context, '/manage_images',
@@ -118,7 +110,7 @@ class _OfficerHomeScreenState extends State<OfficerHomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.edit, color: Colors.teal),
-              title: const Text('Edit Reward'),
+              title: const Text('ตั่งค่าของรางวัล'),
               onTap: () {
                 Navigator.pushNamed(context, '/search_edit_reward',
                     arguments: widget.officer_id);

@@ -8,10 +8,10 @@ class Search_deleteRedemptionsScreen extends StatefulWidget {
   const Search_deleteRedemptionsScreen({super.key});
 
   @override
-  _SearchRedemptionsScreenState createState() => _SearchRedemptionsScreenState();
+  SearchRedemptionsScreenState createState() => SearchRedemptionsScreenState();
 }
 
-class _SearchRedemptionsScreenState extends State<Search_deleteRedemptionsScreen> {
+class SearchRedemptionsScreenState extends State<Search_deleteRedemptionsScreen> {
   List<dynamic> redemptions = [];
   bool isLoading = true;
   String selectedStatus = 'all'; // เลือกสถานะเริ่มต้นเป็น all (แสดงทั้งหมด)
@@ -28,7 +28,7 @@ class _SearchRedemptionsScreenState extends State<Search_deleteRedemptionsScreen
   Future<void> fetchRedemptions() async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/redemptions/search_redemptions'),
+        Uri.parse('http://192.168.1.42:3000/redemptions/search_redemptions'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'status': selectedStatus != 'all' ? selectedStatus : null,
@@ -197,7 +197,7 @@ class _SearchRedemptionsScreenState extends State<Search_deleteRedemptionsScreen
   Future<void> deleteRedemption(String redemptionId) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/redemptions/delete_redemption'),
+        Uri.parse('http://192.168.1.42:3000/redemptions/delete_redemption'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'redemption_id': redemptionId}),
       );

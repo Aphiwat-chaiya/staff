@@ -25,11 +25,10 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     });
 
     try {
-      final uri = Uri.parse('http://10.0.2.2:3000/upload_image'); // เปลี่ยนเป็น URL เซิร์ฟเวอร์ของคุณ
+      final uri = Uri.parse('http://192.168.1.42:3000/upload_image'); // เปลี่ยนเป็น URL เซิร์ฟเวอร์ของคุณ
 
       // สร้าง request
       var request = http.MultipartRequest('POST', uri);
-      request.fields['officer_id'] = widget.officer_id; // ส่ง officer_id
       request.fields['description'] = _description; // ส่งคำบรรยาย
       
       // เพิ่มภาพใน request
