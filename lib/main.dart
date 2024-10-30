@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_12/screens_officer/image_for_new.dart';
+import 'package:flutter_application_12/screens_officer/add_new.dart';
 import 'package:flutter_application_12/screens_officer/manage_images.dart';
 import 'screens_officer/redemtion_deleted.dart';
 import 'screens_employer/login_FuelTransaction.dart'; // Staff login screen
@@ -57,11 +57,6 @@ class MyApp extends StatelessWidget {
               ModalRoute.of(context)!.settings.arguments as String;
           return SearchAndEditRewardPage(officer_id: officerId);
         },
-        '/image_for_new': (context) {
-          final String officerId =
-              ModalRoute.of(context)!.settings.arguments as String;
-          return ImageUploadPage(officer_id: officerId);
-        },
         '/manage_images': (context) {
           final String officerId =
               ModalRoute.of(context)!.settings.arguments as String;
@@ -73,6 +68,7 @@ class MyApp extends StatelessWidget {
             const Search_deleteRedemptionsScreen(),
         '/history_of_year': (context) => const AnnualProcessingScreen(),
         '/FuelTypeStats': (context) => const FuelTypeStatsPage(),
+        '/image_for_new': (context) => ImageUploadPage(),
       },
     );
   }

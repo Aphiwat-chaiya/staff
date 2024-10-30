@@ -48,31 +48,44 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('ใบเสร็จ'),
+        centerTitle: true, // จัดข้อความให้อยู่กลาง
+        backgroundColor: const Color.fromARGB(
+            255, 36, 213, 74), // เปลี่ยนสีพื้นหลังของ AppBar
+        elevation: 4.0, // ความสูงของเงา
       ),
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.start, // ย้ายเนื้อหาไปด้านบนสุด
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          Screenshot(
-            controller: screenshotController,
-            child: Container(
-              width: 150,
-              color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: _buildReceiptContent(),
+          Center(
+            // ใช้ Center เพื่อให้คอนเทนเนอร์อยู่ตรงกลางจอ
+            child: Screenshot(
+              controller: screenshotController,
+              child: Container(
+                width: MediaQuery.of(context).size.width *
+                    0.4, // ปรับความกว้างให้เหมาะสม
+                color: Colors.white,
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: _buildReceiptContent(),
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 0.1),
+          const SizedBox(height: 8),
           _buildButtons(),
         ],
       ),
     );
   }
 
+  String _convertToBuddhistYear(DateTime dateTime) {
+    return (dateTime.year + 543).toString(); // เพิ่ม 543 เพื่อแปลงปี
+  }
+
   Widget _buildReceiptContent() {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.start, // ใช้ mainAxisAlignment.start เพื่อให้เนื้อหาอยู่บนสุด
+      mainAxisAlignment: MainAxisAlignment
+          .start, // ใช้ mainAxisAlignment.start เพื่อให้เนื้อหาอยู่บนสุด
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
@@ -86,16 +99,23 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
           ),
         ),
         Divider(thickness: 2, color: Colors.black),
-        _buildLeftAlignedRow('หมายเลขรายการ', widget.transactionId),
-        _buildLeftAlignedRow('ID สมาชิก', widget.memberId),
-        _buildLeftAlignedRow('ชื่อนามสกุล', '${widget.memberFirstName} ${widget.memberLastName}'),
-        _buildLeftAlignedRow('ประเภทน้ำมัน', widget.fuelType),
-        _buildLeftAlignedRow('ราคา', '฿${widget.price.toStringAsFixed(2)}'),
-        _buildLeftAlignedRow('แต้มสะสม', widget.pointsEarned.toString()),
-        _buildLeftAlignedRow('ปันผลประจำปี', '฿${widget.dividend.toStringAsFixed(2)}'),
-        _buildLeftAlignedRow('วันที่ทำรายการ', DateFormat('dd/MM/yyyy').format(DateTime.now())),
-        _buildLeftAlignedRow('เวลา', DateFormat('HH:mm').format(DateTime.now())),
-        _buildLeftAlignedRow('ผู้บันทึก', '${widget.staffFirstName} ${widget.staffLastName}'),
+        _buildLeftAlignedRow('หมายเลขทำรายการ', widget.transactionId),
+        _buildLeftAlignedRow('เลขสมาชิก', widget.memberId),
+        _buildLeftAlignedRow(
+            'ชื่อ', '${widget.memberFirstName} ${widget.memberLastName}'),
+        _buildLeftAlignedRow('น้ำมัน', widget.fuelType),
+        _buildLeftAlignedRow('จำนวน', '${widget.price.toStringAsFixed(2)} บาท'),
+        _buildLeftAlignedRow('รับแต้มสะสม', widget.pointsEarned.toString()),
+        _buildLeftAlignedRow(
+            'ปันผล', '${widget.dividend.toStringAsFixed(2)} บาท'),
+        _buildLeftAlignedRow(
+            'วันทำรายการ',
+            DateFormat('dd/MM/yyyy').format(DateTime.now()).replaceFirst(
+                RegExp(r'(\d{4})'), _convertToBuddhistYear(DateTime.now()))),
+        _buildLeftAlignedRow(
+            'เวลา', DateFormat('HH:mm น').format(DateTime.now())),
+        _buildLeftAlignedRow(
+            'ผู้บันทึก', '${widget.staffFirstName} ${widget.staffLastName}'),
         Divider(thickness: 2, color: Colors.black),
       ],
     );
@@ -110,16 +130,39 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
             Center(
               child: CircularProgressIndicator(),
             ),
+          const SizedBox(height: 100),
           ElevatedButton(
             onPressed: () => printReceipt(),
-            child: const Text('พิมพ์ใบเสร็จ'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 113, 187, 199),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 4,
+            ),
+            child: const Text(
+              'พิมพ์ใบเสร็จ',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 16),
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context, true);
             },
-            child: const Text('กลับไปหน้าบันทึก'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color.fromARGB(255, 23, 145, 74),
+              padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 32),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(30),
+              ),
+              elevation: 2,
+            ),
+            child: const Text(
+              'กลับไปหน้าบันทึก',
+              style: TextStyle(fontSize: 16, color: Colors.black87),
+            ),
           ),
         ],
       ),

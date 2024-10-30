@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -14,6 +15,27 @@ class _LoginScreen extends State<Login> {
   final _phoneNumberController = TextEditingController();
   String errorMessage = '';
   bool _isPasswordVisible = false; // ตัวแปรเพื่อเก็บสถานะการแสดงรหัสผ่าน
+  bool _rememberMe = false; // ตัวแปรเพื่อเก็บสถานะการจดจำรหัสผ่าน
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedCredentials(); // โหลดข้อมูลที่บันทึกไว้เมื่อเริ่มต้น
+  }
+
+  Future<void> _loadSavedCredentials() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedId = prefs.getString('staff_id');
+    String? savedPassword = prefs.getString('password');
+
+    if (savedId != null) {
+      _idController.text = savedId;
+    }
+    if (savedPassword != null) {
+      _phoneNumberController.text = savedPassword;
+      _rememberMe = true; // ถ้ารหัสผ่านมีการบันทึกไว้ ให้ตั้งค่าสถานะ
+    }
+  }
 
   Future<void> _login() async {
     try {
@@ -30,6 +52,13 @@ class _LoginScreen extends State<Login> {
       );
 
       if (response.statusCode == 200) {
+        // ถ้าผลลัพธ์ถูกต้อง บันทึกรหัสผ่านถ้าเลือกจดจำ
+        if (_rememberMe) {
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('staff_id', _idController.text);
+          await prefs.setString('password', _phoneNumberController.text);
+        }
+
         Navigator.pushNamed(
           context,
           '/sales',
@@ -123,6 +152,21 @@ class _LoginScreen extends State<Login> {
                       },
                     ),
                   ),
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Checkbox(
+                      value: _rememberMe,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _rememberMe = value ?? false; // ปรับปรุงสถานะ
+                        });
+                      },
+                    ),
+                    const Text('จดจำรหัสผ่าน'),
+                  ],
                 ),
                 const SizedBox(height: 30),
                 ElevatedButton.icon(

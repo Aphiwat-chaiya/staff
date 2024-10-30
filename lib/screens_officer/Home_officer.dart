@@ -110,7 +110,7 @@ class OfficerHomeScreenState extends State<OfficerHomeScreen> {
             ),
             ListTile(
               leading: const Icon(Icons.edit, color: Colors.teal),
-              title: const Text('ตั่งค่าของรางวัล'),
+              title: const Text('เพิ่มและตั่งค่าของรางวัล'),
               onTap: () {
                 Navigator.pushNamed(context, '/search_edit_reward',
                     arguments: widget.officer_id);
