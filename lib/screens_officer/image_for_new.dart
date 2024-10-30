@@ -25,7 +25,7 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     });
 
     try {
-      final uri = Uri.parse('http://192.168.1.42:3000/upload_image'); // เปลี่ยนเป็น URL เซิร์ฟเวอร์ของคุณ
+      final uri = Uri.parse('http://192.168.1.30:3000/upload_image'); // เปลี่ยนเป็น URL เซิร์ฟเวอร์ของคุณ
 
       // สร้าง request
       var request = http.MultipartRequest('POST', uri);

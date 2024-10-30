@@ -22,7 +22,7 @@ class _OfficerLoginState extends State<OfficerLogin> {
 
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.1.42:3000/officers/login'), // Update this URL
+        Uri.parse('http://192.168.1.30:3000/officers/login'), // Update this URL
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",

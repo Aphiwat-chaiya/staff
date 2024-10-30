@@ -29,7 +29,7 @@ class _ImageManagementPageState extends State<ImageManagementPage> {
       _isLoading = true;
     });
 
-    var response = await http.get(Uri.parse('http://192.168.1.42:3000/get_images'));
+    var response = await http.get(Uri.parse('http://192.168.1.30:3000/get_images'));
 
     if (response.statusCode == 200) {
       var images = (jsonDecode(response.body) as List).cast<Map<String, dynamic>>();
@@ -38,14 +38,14 @@ class _ImageManagementPageState extends State<ImageManagementPage> {
             .where((img) => img['status'] == 'true')
             .map((img) => {
                   ...img,
-                  'image_url': 'http://192.168.1.42:3000/uploadnews/${img['image_url']}',
+                  'image_url': 'http://192.168.1.30:3000/uploadnews/${img['image_url']}',
                 })
             .toList();
         _allImages = images
             .where((img) => img['status'] == 'false')
             .map((img) => {
                   ...img,
-                  'image_url': 'http://192.168.1.42:3000/uploadnews/${img['image_url']}',
+                  'image_url': 'http://192.168.1.30:3000/uploadnews/${img['image_url']}',
                 })
             .toList();
 
@@ -64,7 +64,7 @@ class _ImageManagementPageState extends State<ImageManagementPage> {
 
   Future<void> _updateImageStatus(int imageId, String newStatus) async {
     var response = await http.post(
-      Uri.parse('http://192.168.1.42:3000/update_image_status'),
+      Uri.parse('http://192.168.1.30:3000/update_image_status'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         'image_id': imageId,

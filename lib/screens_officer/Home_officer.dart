@@ -31,7 +31,7 @@ class OfficerHomeScreenState extends State<OfficerHomeScreen> {
 
   Future<List<dynamic>> _fetchTransactions() async {
     final response =
-        await http.get(Uri.parse('http://192.168.1.42:3000/transactions'));
+        await http.get(Uri.parse('http://192.168.1.30:3000/transactions'));
 
     if (response.statusCode == 200) {
       return jsonDecode(response.body);

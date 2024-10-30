@@ -15,7 +15,7 @@ class TransactionHistoryScreen extends StatefulWidget {
 
 class TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
   List<dynamic> transactions = [];
-  String baseUrl = 'http://192.168.1.42:3000'; // ที่อยู่ API ของคุณ
+  String baseUrl = 'http://192.168.1.30:3000'; // ที่อยู่ API ของคุณ
 
   @override
   void initState() {

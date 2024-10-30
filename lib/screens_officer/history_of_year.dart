@@ -28,7 +28,7 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
 
   Future<void> _fetchYears() async {
     final response = await http.get(
-      Uri.parse('http://192.168.1.42:3000/annual_dividends/years'),
+      Uri.parse('http://192.168.1.30:3000/annual_dividends/years'),
     );
 
     if (response.statusCode == 200) {
@@ -42,7 +42,7 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
 
   Future<void> _fetchCustomers() async {
     final response = await http.get(
-      Uri.parse('http://192.168.1.42:3000/customers'),
+      Uri.parse('http://192.168.1.30:3000/customers'),
     );
 
     if (response.statusCode == 200) {
@@ -55,7 +55,7 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
   }
 
   Future<List<dynamic>> _fetchAnnualDividends() async {
-    String url = 'http://192.168.1.42:3000/annual_dividends';
+    String url = 'http://192.168.1.30:3000/annual_dividends';
 
     Map<String, String> queryParams = {};
     if (selectedYear != null && selectedYear!.isNotEmpty) {
