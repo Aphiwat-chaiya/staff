@@ -40,7 +40,7 @@ class ReceiptScreen extends StatefulWidget {
 }
 
 class _ReceiptScreenState extends State<ReceiptScreen> {
-  bool _isPrinting = false; // สถานะการพิมพ์
+  bool _isPrinting = false;
   ScreenshotController screenshotController = ScreenshotController();
 
   @override
@@ -50,22 +50,20 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
         title: const Text('ใบเสร็จ'),
       ),
       body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.start, // ย้ายเนื้อหาไปด้านบนสุด
         children: [
-          Expanded(
-            child: Screenshot(
-              controller: screenshotController,
-              child: Container(
-                width: 384, // ขนาดกว้าง 58mm ที่ 203 DPI
-                color: Colors.white, // ตั้งพื้นหลังเป็นสีขาว
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: _buildReceiptContent(),
-                ),
+          Screenshot(
+            controller: screenshotController,
+            child: Container(
+              width: 150,
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: _buildReceiptContent(),
               ),
             ),
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 0.1),
           _buildButtons(),
         ],
       ),
@@ -74,11 +72,12 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
 
   Widget _buildReceiptContent() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start, // ใช้ mainAxisAlignment.start เพื่อให้เนื้อหาอยู่บนสุด
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Center(
           child: Text(
-            'ใบเสร็จรับเงิน',
+            'ใบเสร็จสะสมแต้ม',
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -87,23 +86,17 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
           ),
         ),
         Divider(thickness: 2, color: Colors.black),
-        SizedBox(height: 10),
-        _buildReceiptRow('หมายเลขรายการ', widget.transactionId),
-        _buildReceiptRow('เบอร์โทร', widget.phoneNumber),
-        _buildReceiptRow('ID สมาชิก', widget.memberId),
-        _buildReceiptRow('ชื่อนามสกุล',
-            '${widget.memberFirstName} ${widget.memberLastName}'),
-        _buildReceiptRow('ประเภทน้ำมัน', widget.fuelType),
-        _buildReceiptRow('ราคา', '฿${widget.price.toStringAsFixed(2)}'),
-        _buildReceiptRow('แต้มสะสม', widget.pointsEarned.toString()),
-        _buildReceiptRow(
-            'ปันผลประจำปี', '฿${widget.dividend.toStringAsFixed(2)}'),
-        _buildReceiptRow('วันที่ทำรายการ',
-            DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())),
-        _buildReceiptRow(
-            'ผู้บันทึก', '${widget.staffFirstName} ${widget.staffLastName}'),
+        _buildLeftAlignedRow('หมายเลขรายการ', widget.transactionId),
+        _buildLeftAlignedRow('ID สมาชิก', widget.memberId),
+        _buildLeftAlignedRow('ชื่อนามสกุล', '${widget.memberFirstName} ${widget.memberLastName}'),
+        _buildLeftAlignedRow('ประเภทน้ำมัน', widget.fuelType),
+        _buildLeftAlignedRow('ราคา', '฿${widget.price.toStringAsFixed(2)}'),
+        _buildLeftAlignedRow('แต้มสะสม', widget.pointsEarned.toString()),
+        _buildLeftAlignedRow('ปันผลประจำปี', '฿${widget.dividend.toStringAsFixed(2)}'),
+        _buildLeftAlignedRow('วันที่ทำรายการ', DateFormat('dd/MM/yyyy').format(DateTime.now())),
+        _buildLeftAlignedRow('เวลา', DateFormat('HH:mm').format(DateTime.now())),
+        _buildLeftAlignedRow('ผู้บันทึก', '${widget.staffFirstName} ${widget.staffLastName}'),
         Divider(thickness: 2, color: Colors.black),
-        const SizedBox(height: 10),
       ],
     );
   }
@@ -115,7 +108,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
         children: [
           if (_isPrinting)
             Center(
-              child: CircularProgressIndicator(), // แสดงวงกลมหมุนเมื่อพิมพ์
+              child: CircularProgressIndicator(),
             ),
           ElevatedButton(
             onPressed: () => printReceipt(),
@@ -124,7 +117,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
           const SizedBox(height: 10),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context, true); // ส่งค่า true กลับไปหน้าบันทึก
+              Navigator.pop(context, true);
             },
             child: const Text('กลับไปหน้าบันทึก'),
           ),
@@ -133,28 +126,22 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
     );
   }
 
-  Widget _buildReceiptRow(String label, String value) {
+  Widget _buildLeftAlignedRow(String label, String value) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0), // ปรับระยะเว้น
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start, // ชิดซ้ายทั้งหมด
-        children: [
-          Text(
-            label,
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
-          ),
-          Text(
-            value,
-            style: TextStyle(color: Colors.black),
-          ),
-        ],
+      padding: const EdgeInsets.symmetric(vertical: 2.0),
+      child: Text(
+        '$label: $value',
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 12,
+        ),
       ),
     );
   }
 
   Future<void> printReceipt() async {
     setState(() {
-      _isPrinting = true; // เปลี่ยนสถานะเป็นกำลังพิมพ์
+      _isPrinting = true;
     });
 
     final bluetooth = BlueThermalPrinter.instance;
@@ -162,7 +149,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
     if (widget.selectedDevice == null) {
       print("ยังไม่ได้เลือกอุปกรณ์ Bluetooth.");
       setState(() {
-        _isPrinting = false; // รีเซ็ตสถานะ
+        _isPrinting = false;
       });
       return;
     }
@@ -173,11 +160,11 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
         await bluetooth.connect(widget.selectedDevice!);
       }
 
-      // ใช้ screenshotController แคปภาพหน้าจอ
+      // จับภาพเฉพาะส่วนที่มีข้อมูลตัวอักษร
       final image = await screenshotController.capture();
       if (image != null) {
         bluetooth.printNewLine();
-        bluetooth.printImageBytes(image); // พิมพ์ภาพที่แคปเจอร์ได้
+        bluetooth.printImageBytes(image);
         bluetooth.printNewLine();
       }
       print("พิมพ์ใบเสร็จสำเร็จ.");
@@ -185,7 +172,7 @@ class _ReceiptScreenState extends State<ReceiptScreen> {
       print("ข้อผิดพลาดในการพิมพ์ใบเสร็จ: $e");
     } finally {
       setState(() {
-        _isPrinting = false; // รีเซ็ตสถานะหลังจากพิมพ์เสร็จ
+        _isPrinting = false;
       });
     }
   }
