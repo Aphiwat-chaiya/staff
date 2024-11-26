@@ -40,7 +40,7 @@ class _LoginScreen extends State<Login> {
   Future<void> _login() async {
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.1.30:3000/staff/login'),
+        Uri.parse('http://192.168.1.19:3000/staff/login'),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",

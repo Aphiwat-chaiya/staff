@@ -28,7 +28,7 @@ class SearchRedemptionsScreenState extends State<Search_deleteRedemptionsScreen>
   Future<void> fetchRedemptions() async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.30:3000/redemptions/search_redemptions'),
+        Uri.parse('http://192.168.1.19:3000/redemptions/search_redemptions'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'status': selectedStatus != 'all' ? selectedStatus : null,
@@ -197,7 +197,7 @@ class SearchRedemptionsScreenState extends State<Search_deleteRedemptionsScreen>
   Future<void> deleteRedemption(String redemptionId) async {
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.1.30:3000/redemptions/delete_redemption'),
+        Uri.parse('http://192.168.1.19:3000/redemptions/delete_redemption'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'redemption_id': redemptionId}),
       );

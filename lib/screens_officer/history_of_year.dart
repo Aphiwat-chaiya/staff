@@ -28,7 +28,7 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
 
   Future<void> _fetchYears() async {
     final response = await http.get(
-      Uri.parse('http://192.168.1.30:3000/annual_dividends/years'),
+      Uri.parse('http://192.168.1.19:3000/annual_dividends/years'),
     );
 
     if (response.statusCode == 200) {
@@ -42,7 +42,7 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
 
   Future<void> _fetchCustomers() async {
     final response = await http.get(
-      Uri.parse('http://192.168.1.30:3000/customers'),
+      Uri.parse('http://192.168.1.19:3000/customers'),
     );
 
     if (response.statusCode == 200) {
@@ -55,7 +55,7 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
   }
 
   Future<List<dynamic>> _fetchAnnualDividends() async {
-    String url = 'http://192.168.1.30:3000/annual_dividends';
+    String url = 'http://192.168.1.19:3000/annual_dividends';
 
     Map<String, String> queryParams = {};
     if (selectedYear != null && selectedYear!.isNotEmpty) {
@@ -82,6 +82,14 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
     setState(() {
       _annualDividends = _fetchAnnualDividends();
     });
+  }
+
+  String _getCustomerName(String customerId) {
+    final customer = customers.firstWhere(
+      (c) => c['customer_id'].toString() == customerId,
+      orElse: () => {'first_name': 'ไม่ทราบชื่อ', 'last_name': ''},
+    );
+    return '${customer['first_name']} ${customer['last_name']}';
   }
 
   @override
@@ -136,16 +144,22 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
                     value: selectedCustomerId,
                     hint: const Text('ทั้งหมด'),
                     isExpanded: true,
-                    items: customers.map((customer) {
-                      return DropdownMenuItem<String>(
-                        value: customer['customer_id'].toString(),
-                        child: Text(
-                            '${customer['customer_id']}: ${customer['first_name']} ${customer['last_name']}'),
-                      );
-                    }).toList(),
+                    items: [
+                      DropdownMenuItem<String>(
+                        value: '',
+                        child: Text('ทั้งหมด'),
+                      ),
+                      ...customers.map((customer) {
+                        return DropdownMenuItem<String>(
+                          value: customer['customer_id'].toString(),
+                          child: Text(
+                              '${customer['customer_id']}: ${customer['first_name']} ${customer['last_name']}'),
+                        );
+                      }).toList(),
+                    ],
                     onChanged: (value) {
                       setState(() {
-                        selectedCustomerId = value;
+                        selectedCustomerId = value!.isEmpty ? null : value;
                       });
                       _refreshData();
                     },
@@ -170,6 +184,8 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
                       itemCount: annualDividends.length,
                       itemBuilder: (context, index) {
                         final dividend = annualDividends[index];
+                        final customerName = _getCustomerName(
+                            dividend['customer_id'].toString());
                         return Card(
                           margin: const EdgeInsets.symmetric(vertical: 8.0),
                           elevation: 4,
@@ -177,16 +193,17 @@ class _AnnualProcessingScreenState extends State<AnnualProcessingScreen> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: ListTile(
-                            leading: const Icon(Icons.monetization_on, color: Colors.green),
+                            leading: const Icon(Icons.monetization_on,
+                                color: Colors.green),
                             title: Text(
-                              'ลูกค้า ID: ${dividend['customer_id']} | ปี: ${dividend['year']}',
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              'เลขสมาชิก  ${dividend['customer_id']} | ปี: ${dividend['year']}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             subtitle: Text(
+                              'ชื่อ: $customerName\n'
                               'คะแนนที่ใช้: ${dividend['points_used']}\n'
-                              'คะแนนที่ได้รับ: ${dividend['points_earned']}\n'
-                              'ปันผลที่ได้: ${dividend['dividend_amount']} บาท\n'
-                              'เจ้าหน้าที่: ${dividend['officer_id']}',
+                              'ปันผลที่ได้: ${dividend['dividend_amount']} บาท\n',
                             ),
                           ),
                         );

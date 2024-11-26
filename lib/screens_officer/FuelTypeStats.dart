@@ -27,7 +27,7 @@ class _FuelTypeStatsPageState extends State<FuelTypeStatsPage> {
   // Fetch the list of fuel types from the API
   Future<void> fetchFuelTypes() async {
     try {
-      final response = await http.get(Uri.parse('http://192.168.1.30:3000/fuel_types'));
+      final response = await http.get(Uri.parse('http://192.168.1.19:3000/fuel_types'));
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);
         setState(() {
@@ -42,7 +42,7 @@ class _FuelTypeStatsPageState extends State<FuelTypeStatsPage> {
   // Fetch stats for the selected fuel type and filter (day, month, year)
   Future<void> fetchFuelTypeStats(String fuelType) async {
     String filter = selectedFilter;
-    String apiUrl = 'http://192.168.1.30:3000/fuel_type_stats?fuel_type=$fuelType&filter=$filter';
+    String apiUrl = 'http://192.168.1.19:3000/fuel_type_stats?fuel_type=$fuelType&filter=$filter';
 
     if (filter == 'day') {
       apiUrl += '&year=${selectedDate.year}&month=${selectedDate.month}&day=${selectedDate.day}';

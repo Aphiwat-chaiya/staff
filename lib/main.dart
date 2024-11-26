@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_12/screens_officer/add_new.dart';
-import 'package:flutter_application_12/screens_officer/manage_images.dart';
+import 'package:flutter_application_12/screens_officer/news_page.dart';
 import 'screens_officer/redemtion_deleted.dart';
 import 'screens_employer/login_FuelTransaction.dart'; // Staff login screen
 import 'screens_employer/record_page.dart';
 import 'screens_officer/login_officer.dart'; // Officer login screen
 import 'screens_officer/search_transaction.dart'; // Search transactions
 import 'screens_officer/redeem_items.dart'; // Redeem items
-import 'screens_officer/search_edit_reward.dart'; // Search reward
+import 'screens_officer/edit_reward.dart'; // Search reward
 import 'screens_employer/get_rewarded.dart';
 import 'screens_officer/history_of_year.dart';
 import 'screens_officer/FuelTypeStats.dart';
@@ -57,18 +57,13 @@ class MyApp extends StatelessWidget {
               ModalRoute.of(context)!.settings.arguments as String;
           return SearchAndEditRewardPage(officer_id: officerId);
         },
-        '/manage_images': (context) {
-          final String officerId =
-              ModalRoute.of(context)!.settings.arguments as String;
-          return ImageManagementPage(officer_id: officerId);
-        },
-
         '/redeem_items': (context) => const RewardManagementPage(),
         '/redemption_deleted': (context) =>
             const Search_deleteRedemptionsScreen(),
         '/history_of_year': (context) => const AnnualProcessingScreen(),
         '/FuelTypeStats': (context) => const FuelTypeStatsPage(),
         '/image_for_new': (context) => ImageUploadPage(),
+        '/news': (context) => NewsPage(),
       },
     );
   }

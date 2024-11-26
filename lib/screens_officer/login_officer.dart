@@ -13,16 +13,16 @@ class _OfficerLoginState extends State<OfficerLogin> {
   final _officerIdController = TextEditingController();
   final _passwordController = TextEditingController();
   String errorMessage = '';
-  bool _isLoading = false; // Track loading state
+  bool _isLoading = false;
 
   Future<void> _loginOfficer() async {
     setState(() {
-      _isLoading = true; // Show loading indicator
+      _isLoading = true;
     });
 
     try {
       var response = await http.post(
-        Uri.parse('http://192.168.1.30:3000/officers/login'), // Update this URL
+        Uri.parse('http://192.168.1.19:3000/officers/login'),
         headers: {
           "Content-Type": "application/json",
           "Accept": "application/json",
@@ -34,14 +34,14 @@ class _OfficerLoginState extends State<OfficerLogin> {
       );
 
       setState(() {
-        _isLoading = false; // Hide loading indicator
+        _isLoading = false;
       });
 
       if (response.statusCode == 200) {
         Navigator.pushNamed(
           context,
           '/officer_home',
-          arguments: {'officer_id': _officerIdController.text}, // Pass officer_id to home screen
+          arguments: {'officer_id': _officerIdController.text},
         );
       } else if (response.statusCode == 404) {
         setState(() {
@@ -56,7 +56,7 @@ class _OfficerLoginState extends State<OfficerLogin> {
       }
     } catch (e) {
       setState(() {
-        _isLoading = false; // Hide loading indicator
+        _isLoading = false;
         errorMessage = 'การเชื่อมต่อผิดพลาด';
       });
       _showSnackBar(errorMessage, Colors.red);
@@ -76,7 +76,7 @@ class _OfficerLoginState extends State<OfficerLogin> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Officer Login'),
+        title: const Text('เข้าสู่ระบบเจ้าหน้าที่สหกรณ์'),
         backgroundColor: Colors.blue[800],
       ),
       body: Padding(
@@ -84,9 +84,8 @@ class _OfficerLoginState extends State<OfficerLogin> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            // เพิ่ม Icon แทนรูปภาพ
             Icon(
-              Icons.security, // เลือกไอคอนที่เหมาะสม
+              Icons.security,
               size: 80,
               color: Colors.blue[800],
             ),
@@ -102,10 +101,11 @@ class _OfficerLoginState extends State<OfficerLogin> {
             const SizedBox(height: 20),
             TextField(
               controller: _passwordController,
+              obscureText: true, // Secure password field
               decoration: const InputDecoration(
                 labelText: 'รหัสผ่าน',
                 border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.phone),
+                prefixIcon: Icon(Icons.lock),
               ),
             ),
             const SizedBox(height: 20),
@@ -119,7 +119,7 @@ class _OfficerLoginState extends State<OfficerLogin> {
                 ),
               ),
               child: _isLoading 
-                ? const CircularProgressIndicator() // Show loading indicator
+                ? const CircularProgressIndicator(color: Colors.white)
                 : const Text(
                     'Login',
                     style: TextStyle(fontSize: 18),

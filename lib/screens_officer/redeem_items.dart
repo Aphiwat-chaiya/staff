@@ -84,7 +84,7 @@ class _RewardManagementPageState extends State<RewardManagementPage> {
 
     var request = http.MultipartRequest(
       'POST',
-      Uri.parse('http://192.168.1.30:3000/rewards'),
+      Uri.parse('http://192.168.1.19:3000/rewards'),
     );
 
     request.fields['reward_name'] = rewardName;

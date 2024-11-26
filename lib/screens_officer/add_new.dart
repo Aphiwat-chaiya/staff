@@ -11,8 +11,7 @@ class ImageUploadPage extends StatefulWidget {
 }
 
 class _ImageUploadPageState extends State<ImageUploadPage> {
-  List<Map<String, dynamic>> _selectedImages =
-      []; // Store images with descriptions
+  List<Map<String, dynamic>> _selectedImages = [];
   final ImagePicker _picker = ImagePicker();
   bool _isUploading = false;
   final _descriptionController = TextEditingController();
@@ -36,17 +35,16 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
       for (var pickedFile in pickedFiles) {
         if (_selectedImages.length < 10) {
           setState(() {
-            // Add selected image with an empty description
             _selectedImages.add({
-              'file': File(pickedFile.path), // Correctly store the File object
-              'description': '', // Initialize with empty description
+              'file': File(pickedFile.path),
+              'description': '',
             });
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text("You can only upload up to 10 images.")),
           );
-          break; // Stop adding images if limit is reached
+          break;
         }
       }
     }
@@ -71,6 +69,12 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     );
   }
 
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
   Future<void> _uploadImages() async {
     if (_selectedImages.isEmpty) return;
 
@@ -79,14 +83,13 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     });
 
     for (var imageInfo in _selectedImages) {
-      var image = imageInfo['file'] as File; // Ensure it's a File
+      var image = imageInfo['file'] as File;
       var stream = http.ByteStream(DelegatingStream.typed(image.openRead()));
       var length = await image.length();
-      var uri = Uri.parse("http://192.168.1.30:3000/upload_news");
+      var uri = Uri.parse("http://192.168.1.19:3000/upload_news");
 
       var request = http.MultipartRequest("POST", uri);
-      request.fields['description'] =
-          imageInfo['description'] ?? ''; // Use the correct description
+      request.fields['description'] = imageInfo['description'] ?? '';
       var multipartFile = http.MultipartFile('image', stream, length,
           filename: basename(image.path));
       request.files.add(multipartFile);
@@ -100,7 +103,7 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to upload image and description")),
         );
-        return; // Stop if one upload fails
+        return;
       }
     }
 
@@ -111,7 +114,7 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content: Text("All images and description uploaded successfully!")),
+          content: Text("All images and descriptions uploaded successfully!")),
     );
   }
 
@@ -128,32 +131,45 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
           children: [
             if (_selectedImages.isNotEmpty)
               Container(
-                margin: EdgeInsets.only(bottom: 20),
                 height: 250,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
                   itemCount: _selectedImages.length,
                   itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () => _showDescriptionDialog(
-                          index), // Show description dialog on tap
-                      child: Container(
-                        margin: EdgeInsets.only(right: 10),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                                color: Colors.black26,
-                                blurRadius: 10,
-                                offset: Offset(0, 4))
-                          ],
+                    return Stack(
+                      children: [
+                        GestureDetector(
+                          onTap: () => _showDescriptionDialog(index),
+                          child: Container(
+                            margin: EdgeInsets.symmetric(horizontal: 5),
+                            width: 150,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(color: Colors.black26, blurRadius: 5)
+                              ],
+                            ),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Image.file(
+                                _selectedImages[index]['file'],
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Image.file(_selectedImages[index]['file'],
-                              width: 150, fit: BoxFit.cover),
+                        Positioned(
+                          right: 5,
+                          top: 5,
+                          child: GestureDetector(
+                            onTap: () => _removeImage(index),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.red,
+                              child: Icon(Icons.close, color: Colors.white),
+                            ),
+                          ),
                         ),
-                      ),
+                      ],
                     );
                   },
                 ),
@@ -180,11 +196,9 @@ class _ImageUploadPageState extends State<ImageUploadPage> {
                     OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
               ),
               onChanged: (text) {
-                // Update description for the last selected image
                 if (_selectedImages.isNotEmpty) {
                   setState(() {
-                    _selectedImages.last['description'] =
-                        text; // Update description for last selected image
+                    _selectedImages.last['description'] = text;
                   });
                 }
               },
